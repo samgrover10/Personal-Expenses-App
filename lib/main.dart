@@ -27,26 +27,28 @@ class MyHomePage extends StatelessWidget {
       appBar: AppBar(
         title: Text(title),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Center(
-              child: Card(
-            elevation: 20,
-            color: Colors.blue,
-            margin: EdgeInsets.all(20),
-            child: Container(
-              height: 200,
-              width: 300,
-              child: Center(
-                  child: Text(
-                "Chart",
-                style: TextStyle(fontSize: 28, color: Colors.white),
-              )),
-            ),
-          )),
-          UserTransaction()
-        ],
+      body: SingleChildScrollView(
+              child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Center(
+                child: Card(
+              elevation: 20,
+              color: Colors.blue,
+              margin: EdgeInsets.all(20),
+              child: Container(
+                height: 100,
+                width: 300,
+                child: Center(
+                    child: Text(
+                  "Chart",
+                  style: TextStyle(fontSize: 28, color: Colors.white),
+                )),
+              ),
+            )),
+            UserTransaction()
+          ],
+        ),
       ),
     );
   }
