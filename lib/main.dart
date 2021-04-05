@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:personal_expenses_app/widgets/new_transaction.dart';
 import 'package:personal_expenses_app/widgets/trans_chart.dart';
 import 'package:personal_expenses_app/widgets/transacton_list.dart';
@@ -24,7 +23,8 @@ class MyApp extends StatelessWidget {
               title: TextStyle(
                   fontFamily: 'Lexend',
                   fontSize: 18,
-                  fontWeight: FontWeight.bold)),
+                  fontWeight: FontWeight.bold),
+                  button: TextStyle(color: Colors.white)),
           appBarTheme: AppBarTheme(
               textTheme: ThemeData.light().textTheme.copyWith(
                   title: TextStyle(
@@ -47,11 +47,17 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final List<Transaction> transactions = [];
 
-  void addNew(String title, double amount) {
+  void addNew(String title, double amount,DateTime selectedDate) {
     Transaction transaction = Transaction(
-        id: 't3', amount: amount, date: DateTime.now(), title: title);
+        id: DateTime.now().toString(), amount: amount, date: selectedDate, title: title);
     setState(() {
       transactions.add(transaction);
+    });
+  }
+
+  void _deleteTransaction(String id){
+    setState(() {
+      transactions.removeWhere((element) => element.id==id);
     });
   }
 
@@ -83,7 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
-          children: [Chart(recentTransactions), TransactionList(transactions)],
+          children: [Chart(recentTransactions), TransactionList(transactions,_deleteTransaction)],
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
