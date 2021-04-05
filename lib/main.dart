@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
                   fontFamily: 'Lexend',
                   fontSize: 18,
                   fontWeight: FontWeight.bold),
-                  button: TextStyle(color: Colors.white)),
+              button: TextStyle(color: Colors.white)),
           appBarTheme: AppBarTheme(
               textTheme: ThemeData.light().textTheme.copyWith(
                   title: TextStyle(
@@ -47,17 +47,20 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final List<Transaction> transactions = [];
 
-  void addNew(String title, double amount,DateTime selectedDate) {
+  void addNew(String title, double amount, DateTime selectedDate) {
     Transaction transaction = Transaction(
-        id: DateTime.now().toString(), amount: amount, date: selectedDate, title: title);
+        id: DateTime.now().toString(),
+        amount: amount,
+        date: selectedDate,
+        title: title);
     setState(() {
       transactions.add(transaction);
     });
   }
 
-  void _deleteTransaction(String id){
+  void _deleteTransaction(String id) {
     setState(() {
-      transactions.removeWhere((element) => element.id==id);
+      transactions.removeWhere((element) => element.id == id);
     });
   }
 
@@ -75,21 +78,64 @@ class _MyHomePageState extends State<MyHomePage> {
     }).toList();
   }
 
+  bool _chartStatus = false;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-        actions: [
-          IconButton(
-              icon: Icon(Icons.add),
-              onPressed: () => _startAddNewTransaction(context)),
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [Chart(recentTransactions), TransactionList(transactions,_deleteTransaction)],
+    final mediaQuery = MediaQuery.of(context);
+    final isLandscape =
+        mediaQuery.orientation == Orientation.landscape;
+    final appBar = AppBar(
+      title: Text(widget.title),
+      actions: [
+        IconButton(
+            icon: Icon(Icons.add),
+            onPressed: () => _startAddNewTransaction(context)),
+      ],
+    );
+    final txWidgetList = Container(
+        height: (mediaQuery.size.height -
+                appBar.preferredSize.height -
+                mediaQuery.padding.top) *
+            0.7,
+        child: TransactionList(transactions, _deleteTransaction));
+    
+        return Scaffold(
+          appBar: appBar,
+          body: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                if (isLandscape)
+                  Row( 
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('Show chart'),
+                      Switch(
+                          value: _chartStatus,
+                          onChanged: (val) {
+                            setState(() {
+                              _chartStatus = val;
+                            });
+                          }),
+                    ],
+                  ),
+                  if(!isLandscape)Container(
+                        height: (mediaQuery.size.height -
+                            appBar.preferredSize.height -
+                            mediaQuery.padding.top) *
+                        0.3,
+                    child: Chart(recentTransactions)),
+                    if(!isLandscape)txWidgetList,
+
+            if(isLandscape)_chartStatus
+                ? Container(
+                    height: (mediaQuery.size.height -
+                            appBar.preferredSize.height -
+                            mediaQuery.padding.top) *
+                        0.7,
+                    child: Chart(recentTransactions))
+                : txWidgetList
+          ],
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

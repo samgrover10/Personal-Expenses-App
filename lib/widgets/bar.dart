@@ -7,14 +7,17 @@ class Bar extends StatelessWidget {
   Bar(this.weekday, this.dayAmount, this.percentageOfTotal);
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return LayoutBuilder(builder:(context,constraints){
+      return Column(
       children: [
-        Container(height: 20,child: FittedBox(child: Text('\$${dayAmount.toStringAsFixed(0)}'))),
+        Container(
+            height: constraints.maxHeight*0.15,
+            child: FittedBox(child: Text('\$${dayAmount.toStringAsFixed(0)}'))),
         SizedBox(
-          height: 4,
+          height: constraints.maxHeight*0.05,
         ),
         Container(
-          height: 60,
+          height: constraints.maxHeight*0.6,
           width: 20,
           child: Stack(
             children: [
@@ -27,17 +30,21 @@ class Bar extends StatelessWidget {
               FractionallySizedBox(
                 heightFactor: percentageOfTotal,
                 child: Container(
-                  decoration:
-                      BoxDecoration(color: Theme.of(context).primaryColor,
+                  decoration: BoxDecoration(
+                      color: Theme.of(context).primaryColor,
                       borderRadius: BorderRadius.circular(10)),
                 ),
               )
             ],
           ),
         ),
-        SizedBox(height: 4,),
-        Text(weekday)
+        SizedBox(
+          height: constraints.maxHeight*0.05,
+        ),
+        Container(height: constraints.maxHeight*0.15,child: Text(weekday))
       ],
     );
+    });
+    
   }
 }
