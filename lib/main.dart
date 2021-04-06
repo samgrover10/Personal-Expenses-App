@@ -79,16 +79,56 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   bool _chartStatus = false;
+
+  List<Widget> _buildLandscape(
+      MediaQueryData mediaQuery, AppBar appBar, Widget txWidgetList) {
+    return [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text('Show chart'),
+          Switch(
+              value: _chartStatus,
+              onChanged: (val) {
+                setState(() {
+                  _chartStatus = val;
+                });
+              }),
+        ],
+      ),
+      _chartStatus
+          ? Container(
+              height: (mediaQuery.size.height -
+                      appBar.preferredSize.height -
+                      mediaQuery.padding.top) *
+                  0.7,
+              child: Chart(recentTransactions))
+          : txWidgetList
+    ];
+  }
+
+  List<Widget> _buildPotrait(
+      MediaQueryData mediaQuery, AppBar appBar, Widget txWidgetList) {
+    return [
+      Container(
+          height: (mediaQuery.size.height -
+                  appBar.preferredSize.height -
+                  mediaQuery.padding.top) *
+              0.3,
+          child: Chart(recentTransactions)),
+      txWidgetList
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
-    final isLandscape =
-        mediaQuery.orientation == Orientation.landscape;
+    final isLandscape = mediaQuery.orientation == Orientation.landscape;
     final appBar = AppBar(
       title: Text(widget.title),
       actions: [
         IconButton(
-            icon: Icon(Icons.add),
+            icon: const Icon(Icons.add),
             onPressed: () => _startAddNewTransaction(context)),
       ],
     );
@@ -98,49 +138,23 @@ class _MyHomePageState extends State<MyHomePage> {
                 mediaQuery.padding.top) *
             0.7,
         child: TransactionList(transactions, _deleteTransaction));
-    
-        return Scaffold(
-          appBar: appBar,
-          body: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                if (isLandscape)
-                  Row( 
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('Show chart'),
-                      Switch(
-                          value: _chartStatus,
-                          onChanged: (val) {
-                            setState(() {
-                              _chartStatus = val;
-                            });
-                          }),
-                    ],
-                  ),
-                  if(!isLandscape)Container(
-                        height: (mediaQuery.size.height -
-                            appBar.preferredSize.height -
-                            mediaQuery.padding.top) *
-                        0.3,
-                    child: Chart(recentTransactions)),
-                    if(!isLandscape)txWidgetList,
 
-            if(isLandscape)_chartStatus
-                ? Container(
-                    height: (mediaQuery.size.height -
-                            appBar.preferredSize.height -
-                            mediaQuery.padding.top) *
-                        0.7,
-                    child: Chart(recentTransactions))
-                : txWidgetList
+    return Scaffold(
+      appBar: appBar,
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            if (isLandscape)
+              ..._buildLandscape(mediaQuery, appBar, txWidgetList),
+            if (!isLandscape)
+              ..._buildPotrait(mediaQuery, appBar, txWidgetList),
           ],
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
         onPressed: () => _startAddNewTransaction(context),
       ),
     );
